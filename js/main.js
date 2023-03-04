@@ -14,6 +14,7 @@ let winner;
 /*----- cached elements  -----*/
 const pResultEl = document.getElementById("p-result");
 const cResultEl = document.getElementById("c-result");
+const countdownEl = document.getElementById("countdown");
 
 /*----- event listeners -----*/
 document.querySelector("main").addEventListener("click", handleChoice);
@@ -28,8 +29,8 @@ function init() {
     c: 0,
   };
   results = {
-    p: "r",
-    c: "r",
+    p: "",
+    c: "",
   };
   winner = "t";
   render();
@@ -66,9 +67,29 @@ function renderScores() {
 function renderResults() {
   pResultEl.src = RPS_LOOKUP[results.p].img;
   cResultEl.src = RPS_LOOKUP[results.c].img;
+  pResultEl.style.borderColor = winner === "p" ? "grey" : "white";
+  cResultEl.style.borderColor = winner === "c" ? "grey" : "white";
 }
 
 function render() {
-  renderScores();
-  renderResults();
+  renderCountdown(function () {
+    renderScores();
+    renderResults();
+  });
+}
+
+function renderCountdown(cb) {
+  let count = 3;
+  countdownEl.style.visibility = "visible";
+  countdownEl.innerText = count;
+  let timerId = setInterval(function () {
+    count--;
+    if (count) {
+      countdownEl.innerText = count;
+    } else {
+      clearInterval(timerId);
+      countdownEl.style.visibility = "hidden";
+      cb();
+    }
+  }, 1000);
 }
