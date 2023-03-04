@@ -1,8 +1,8 @@
 /*----- constants -----*/
 const RPS_LOOKUP = {
-  r: "/imgs/rock.png",
-  p: "/imgs/paper.png",
-  s: "/imgs/scissors.png",
+  r: { img: "/imgs/rock.png", beats: "s" },
+  p: { img: "/imgs/paper.png", beats: "r" },
+  s: { img: "/imgs/scissors.png", beats: "p" },
 };
 /*----- app's state (variables) -----*/
 let scores;
@@ -41,11 +41,21 @@ function handleChoice(evt) {
   // Player has made a choice
   results.p = evt.target.innerText.toLowerCase();
   results.c = getRandomRPS();
-
+  winner = getWinner();
+  scores[winner] += 1;
   render();
 }
 
-function getRandomRPS() {}
+function getWinner() {
+  if (results.p === results.c) return "t";
+  return RPS_LOOKUP[results.p].beats === results.c ? "p" : "c";
+}
+
+function getRandomRPS() {
+  const rps = Object.keys(RPS_LOOKUP);
+  const rndIdx = Math.floor(Math.random() * rps.length);
+  return rps[rndIdx];
+}
 
 function renderScores() {
   for (let key in scores) {
@@ -54,8 +64,8 @@ function renderScores() {
   }
 }
 function renderResults() {
-  pResultEl.src = RPS_LOOKUP[results.p];
-  cResultEl.src = RPS_LOOKUP[results.c];
+  pResultEl.src = RPS_LOOKUP[results.p].img;
+  cResultEl.src = RPS_LOOKUP[results.c].img;
 }
 
 function render() {
